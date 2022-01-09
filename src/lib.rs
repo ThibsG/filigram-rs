@@ -3,7 +3,7 @@ use crate::graphics::{create_watermark_image, overlay_watermark};
 
 use image::Rgba;
 use indicatif::ProgressBar;
-use log::debug;
+use log::{debug, error};
 use rayon::prelude::*;
 use std::fs;
 use std::path::Path;
@@ -82,8 +82,9 @@ pub fn spread_watermark<P: AsRef<Path> + std::fmt::Debug + std::marker::Sync>(
             if rules.is_file_qualified(&path) {
                 debug!("watermarking {:?}", path);
 
-                overlay_watermark(path, target_path.as_path(), &watermark_img)
-                    .expect("error watermarking");
+                if let Err(e) = overlay_watermark(path, target_path.as_path(), &watermark_img) {
+                    error!("Error watermarking: {:?} - {}", path, e.to_string());
+                }
             } else {
                 debug!("copying {:?}", path);
 
@@ -130,25 +131,24 @@ impl Rules {
     /// and if its extension is authorized.
     pub fn is_file_qualified<P: AsRef<Path>>(&self, path: &P) -> bool {
         let path = path.as_ref();
-        if self.excluded_dirs.iter().any(|dir| {
-            path.to_str()
-                .expect("unable to convert path to str")
-                .contains(dir)
-        }) {
+        let path_str = path
+            .file_name()
+            .expect("can't retrieve filename")
+            .to_str()
+            .expect("unable to convert filename to str");
+        if self.excluded_dirs.iter().any(|dir| dir.contains(path_str)) {
             return false;
         }
 
         if let Some(extension) = path.extension() {
-            !self.excluded_files.iter().any(|filename| {
-                path.file_name()
-                    .expect("can't retrieve filename")
-                    .to_str()
-                    .expect("unable to convert filename to str")
-                    .starts_with(filename.as_str())
-            }) && self
-                .authorized_extensions
+            !self
+                .excluded_files
                 .iter()
-                .any(|ext| ext.as_str() == extension)
+                .any(|filename| filename.starts_with(path_str))
+                && self
+                    .authorized_extensions
+                    .iter()
+                    .any(|ext| ext.as_str() == extension)
         } else {
             false
         }
