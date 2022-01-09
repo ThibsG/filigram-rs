@@ -1,4 +1,5 @@
 use image::imageops::{overlay, FilterType};
+use image::io::Reader as ImageReader;
 use image::{ImageBuffer, Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use imageproc::geometric_transformations::{rotate_about_center, Interpolation};
@@ -26,15 +27,9 @@ pub fn overlay_watermark(
     dst: &Path,
     watermark_img: &RgbaImage,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let mut img = image::open(
-        src.to_str()
-            .expect("given src path can't be converted to str"),
-    )?;
+    let mut img = ImageReader::open(src)?.decode()?;
     img = img.resize_exact(500, 500, FilterType::Nearest);
     overlay(&mut img, watermark_img, 0, 0);
-    img.save(
-        dst.to_str()
-            .expect("given dst path can't be converted to str"),
-    )?;
+    img.save(dst)?;
     Ok(())
 }
