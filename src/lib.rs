@@ -131,15 +131,20 @@ impl Rules {
     /// and if its extension is authorized.
     pub fn is_file_qualified<P: AsRef<Path>>(&self, path: &P) -> bool {
         let path = path.as_ref();
+        if self.excluded_dirs.iter().any(|dir| {
+            path.components().any(|comp| {
+                comp.as_os_str().to_str().expect("can't convert an OsStr") == dir.as_str()
+            })
+        }) {
+            println!("excluded dir: {:?}", path);
+            return false;
+        }
+
         let path_str = path
             .file_name()
             .expect("can't retrieve filename")
             .to_str()
             .expect("unable to convert filename to str");
-        if self.excluded_dirs.iter().any(|dir| dir.contains(path_str)) {
-            return false;
-        }
-
         if let Some(extension) = path.extension() {
             !self
                 .excluded_files
