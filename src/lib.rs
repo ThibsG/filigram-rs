@@ -136,7 +136,7 @@ impl Rules {
                 comp.as_os_str().to_str().expect("can't convert an OsStr") == dir.as_str()
             })
         }) {
-            println!("excluded dir: {:?}", path);
+            debug!("file ignored (dir excluded): {:?}", path);
             return false;
         }
 
@@ -153,8 +153,9 @@ impl Rules {
                 && self
                     .authorized_extensions
                     .iter()
-                    .any(|ext| ext.as_str() == extension)
+                    .any(|ext| ext.to_lowercase().as_str() == extension)
         } else {
+            debug!("file ignored (no extension): {:?}", path);
             false
         }
     }
