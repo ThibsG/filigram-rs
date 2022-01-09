@@ -131,6 +131,40 @@ impl Rules {
     /// and if its extension is authorized.
     pub fn is_file_qualified<P: AsRef<Path>>(&self, path: &P) -> bool {
         let path = path.as_ref();
+
+        if let Some(extension) = path.extension() {
+            let extension = extension
+                .to_str()
+                .expect("can't convert to str")
+                .to_lowercase();
+
+            if !self
+                .authorized_extensions
+                .iter()
+                .any(|ext| ext.as_str() == extension)
+            {
+                debug!("file ignored (bad extension): {:?}", path);
+                return false;
+            }
+        } else {
+            debug!("file ignored (no extension): {:?}", path);
+            return false;
+        }
+
+        let path_str = path
+            .file_name()
+            .expect("can't retrieve filename")
+            .to_str()
+            .expect("unable to convert filename to str");
+        if self
+            .excluded_files
+            .iter()
+            .any(|excluded_filename| path_str.starts_with(excluded_filename))
+        {
+            debug!("file ignored (excluded file): {:?}", path);
+            return false;
+        }
+
         if self.excluded_dirs.iter().any(|dir| {
             path.components().any(|comp| {
                 comp.as_os_str().to_str().expect("can't convert an OsStr") == dir.as_str()
@@ -140,24 +174,7 @@ impl Rules {
             return false;
         }
 
-        let path_str = path
-            .file_name()
-            .expect("can't retrieve filename")
-            .to_str()
-            .expect("unable to convert filename to str");
-        if let Some(extension) = path.extension() {
-            !self
-                .excluded_files
-                .iter()
-                .any(|filename| filename.starts_with(path_str))
-                && self
-                    .authorized_extensions
-                    .iter()
-                    .any(|ext| ext.to_lowercase().as_str() == extension)
-        } else {
-            debug!("file ignored (no extension): {:?}", path);
-            false
-        }
+        true
     }
 }
 
