@@ -1,4 +1,4 @@
-use filigram_rs::{spread_watermark, Config, Rules};
+use filigram_rs::{config::Config, spread_watermark, Rules};
 use indicatif::{ProgressBar, ProgressStyle};
 use log::info;
 use std::path::PathBuf;

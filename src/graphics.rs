@@ -6,7 +6,7 @@ use imageproc::geometric_transformations::{rotate_about_center, Interpolation};
 use rusttype::Font;
 use std::path::Path;
 
-use crate::Config;
+use crate::config::Config;
 
 pub fn create_watermark_image(cfg: &Config) -> Result<RgbaImage, Box<dyn std::error::Error>> {
     let mut img: RgbaImage = ImageBuffer::new(500, 500);
