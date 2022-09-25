@@ -8,7 +8,9 @@ use std::path::Path;
 
 use crate::config::Config;
 
-pub fn create_watermark_image(cfg: &Config) -> Result<RgbaImage, Box<dyn std::error::Error>> {
+pub(crate) fn create_watermark_image(
+    cfg: &Config,
+) -> Result<RgbaImage, Box<dyn std::error::Error>> {
     let mut img: RgbaImage = ImageBuffer::new(500, 500);
 
     // font for watermark
@@ -22,7 +24,7 @@ pub fn create_watermark_image(cfg: &Config) -> Result<RgbaImage, Box<dyn std::er
     Ok(img)
 }
 
-pub fn overlay_watermark(
+pub(crate) fn overlay_watermark(
     src: &impl AsRef<Path>,
     dst: &impl AsRef<Path>,
     watermark_img: &RgbaImage,

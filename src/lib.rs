@@ -57,7 +57,10 @@ pub fn spread_watermark<P: AsRef<Path> + std::fmt::Debug + Sync>(
             let relative_path = path.strip_prefix(folder).expect("can't strip prefix");
             let new_dir = target_dir.as_ref().join(relative_path);
             fs::create_dir_all(new_dir).expect("error creating dir");
-            counter.fetch_add(1, Ordering::Relaxed);
+
+            if progress.is_some() {
+                counter.fetch_add(1, Ordering::Relaxed);
+            }
         });
 
     if let Some(progress) = progress {
