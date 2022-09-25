@@ -16,7 +16,12 @@ Watermarking process:
 - image is resized to a fixed size of 500x500
 - process is multithreaded using `rayon` crate.
 
-This library is compatible with Linux and Windows.
+## Compatibility
+
+This library is compatible with:
+- Linux (x86_64-unknown-linux-gnu)
+- Windows (x86_64-pc-windows-gnu)
+- WASI (wasm32-wasi)
 
 ## Build the library
 
@@ -33,6 +38,12 @@ cargo build --release --target x86_64-pc-windows-gnu
 Note: package `mingw-w64` may be required for cross-compilation.
 
 On Ubuntu, run `sudo apt-get install mingw-w64`
+
+For WASI:
+
+```console
+cargo build --release --target wasm32-wasi
+```
 
 ## Run the example
 
