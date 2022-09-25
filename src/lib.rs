@@ -48,9 +48,9 @@ pub fn spread_watermark<P: AsRef<Path> + std::fmt::Debug + Sync>(
         progress.set_length(nb_entries);
     }
 
-    // handle directories first
+    // create directory structure first
     entries
-        .iter()
+        .par_iter()
         .filter(|entry| entry.path().is_dir())
         .for_each(|entry| {
             let path = entry.path();
@@ -71,10 +71,10 @@ pub fn spread_watermark<P: AsRef<Path> + std::fmt::Debug + Sync>(
         .filter(|entry| !entry.path().is_dir())
         .for_each(|entry| {
             let path = entry.path();
+            debug!("entry: {path:?}");
+
             let relative_path = path.strip_prefix(folder).expect("can't strip prefix");
             let target_path = target_dir.as_ref().join(relative_path);
-
-            debug!("entry: {path:?}");
 
             if rules.is_file_qualified(&path) {
                 debug!("watermarking {path:?}");
