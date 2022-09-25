@@ -48,6 +48,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     progress.enable_steady_tick(Duration::from_millis(250));
 
+    // start the watermarking parallelized process
     spread_watermark(&input, &target_dir, &cfg, &rules, Some(&progress))?;
 
     progress.finish();

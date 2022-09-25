@@ -1,24 +1,27 @@
 Filigram-rs
 ===========
 
-Watermark image files in a folder, recursively.
+This library is a convenient wrapper to watermark image files in a folder, recursively.
 
-<img alt="original" src="./data/original.jpg" width="300" height="300"/> <img alt="watermarked" src="./data/watermarked.jpg" width="300" height="300"/> 
+<p align="center">
+    <img alt="original" src="./data/original.jpg" width="300" height="300"/> 
+    <img alt="watermarked" src="./data/watermarked.jpg" width="300" height="300"/>
+</p>
 
 Input folder is copied entirely, applying watermark on image files, depending on some exclusion/inclusion rules.
-If a file is excluded from watermarking, it is simply copied to destination.
+If a file is excluded from watermarking, it is simply copied to destination without any change.
 
 Watermarking process:
-- watermark is customizable
+- watermark text is customizable
 - image is resized to a fixed size of 500x500
 - process is multithreaded using `rayon` crate.
 
-This app is meant to run on Linux and Ubuntu.
+This library is compatible with Linux and Windows.
 
-## Build and test
+## Build the library
 
 ```console
-cargo build --release && ./target/release/filigram-rs
+cargo build --release
 ```
 
 For Windows:
@@ -27,12 +30,14 @@ For Windows:
 cargo build --release --target x86_64-pc-windows-gnu
 ```
 
-Note: package `mingw-w64` may be required.
+Note: package `mingw-w64` may be required for cross-compilation.
 
 On Ubuntu, run `sudo apt-get install mingw-w64`
 
-## Debug logging
+## Run the example
+
+A simple example is provided in the subfolder `examples` to illustrate how to use the library.
 
 ```console
-cargo build --release && RUST_LOG=debug ./target/release/filigram-rs
+cargo run --release --example filigram
 ```
