@@ -1,5 +1,4 @@
 use core::sync::atomic::{AtomicU64, Ordering};
-use indicatif::ProgressBar;
 use log::{debug, error};
 use rayon::prelude::*;
 use std::{fs, path::Path};
@@ -13,6 +12,9 @@ use crate::graphics::{create_watermark_image, overlay_watermark};
 
 pub use crate::config::Config;
 pub use crate::rules::Rules;
+pub use indicatif;
+
+use indicatif::ProgressBar;
 
 /// Apply recursively a watermark.
 ///
