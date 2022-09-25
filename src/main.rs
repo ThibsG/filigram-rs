@@ -1,7 +1,7 @@
 use filigram_rs::{config::Config, rules::Rules, spread_watermark};
 use indicatif::{ProgressBar, ProgressStyle};
 use log::info;
-use std::path::PathBuf;
+use std::{path::PathBuf, time::Duration};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
@@ -19,8 +19,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("From: {:?}", input);
     info!("to: {:?}", target_dir);
 
-    let progress = ProgressBar::new(0).with_style(progress_style());
-    progress.enable_steady_tick(250);
+    let progress = ProgressBar::new(0).with_style(
+        ProgressStyle::default_bar()
+            .template("[{elapsed_precise}] [{bar:40.blue}] ({eta_precise} left)")?
+            .progress_chars("#>-"),
+    );
+    progress.enable_steady_tick(Duration::from_millis(250));
 
     let rules = Rules {
         excluded_dirs: vec![".hidden".to_string()],
@@ -42,10 +46,4 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     progress.finish();
 
     Ok(())
-}
-
-fn progress_style() -> ProgressStyle {
-    ProgressStyle::default_bar()
-        .template("[{elapsed_precise}] [{bar:40.blue}] ({eta_precise} left)")
-        .progress_chars("#>-")
 }

@@ -5,11 +5,9 @@ edition = "2021"
 
 [dependencies]
 env_logger = "0.9"
-indicatif = "0.16"
+indicatif = "0.17"
 image = "0.24"
-# waiting for new release
-# imageproc = "0.23"
-imageproc = { git = "https://github.com/image-rs/imageproc.git" }
+imageproc = "0.23"
 log = "0.4"
 rayon = "1.5"
 rusttype = "0.9"
