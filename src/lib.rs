@@ -9,11 +9,10 @@ pub mod config;
 mod graphics;
 pub mod rules;
 
-use crate::{
-    config::Config,
-    graphics::{create_watermark_image, overlay_watermark},
-    rules::Rules,
-};
+use crate::graphics::{create_watermark_image, overlay_watermark};
+
+pub use crate::config::Config;
+pub use crate::rules::Rules;
 
 /// Apply recursively a watermark.
 ///
