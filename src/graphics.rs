@@ -23,8 +23,8 @@ pub fn create_watermark_image(cfg: &Config) -> Result<RgbaImage, Box<dyn std::er
 }
 
 pub fn overlay_watermark(
-    src: &Path,
-    dst: &Path,
+    src: &impl AsRef<Path>,
+    dst: &impl AsRef<Path>,
     watermark_img: &RgbaImage,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut img = ImageReader::open(src)?.decode()?;

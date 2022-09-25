@@ -1,23 +1,28 @@
 use filigram_rs::{config::Config, rules::Rules, spread_watermark};
 use indicatif::{ProgressBar, ProgressStyle};
-use log::info;
+use log::{info, warn};
 use std::{path::PathBuf, time::Duration};
 
+static RESULT_PATH: &str = "./result";
+static INPUT_PATH: &str = "./data/input";
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    std::env::set_var("RUST_LOG", "warn,info,error,debug");
     env_logger::init();
 
-    info!("filigram-rs program");
+    info!("Starting program");
 
-    if std::fs::read_dir("./result").is_ok() {
-        std::fs::remove_dir_all("./result")?;
+    let input = PathBuf::from(INPUT_PATH).canonicalize()?;
+    let target_dir = PathBuf::from(RESULT_PATH).canonicalize()?;
+
+    if target_dir.exists() {
+        warn!("removing existing results");
+        std::fs::remove_dir_all(&target_dir)?;
     }
-    std::fs::create_dir("./result")?;
+    std::fs::create_dir(&target_dir)?;
 
-    let input = PathBuf::from("./data/input").canonicalize()?;
-    let target_dir = PathBuf::from("./result").canonicalize()?;
-
-    info!("From: {:?}", input);
-    info!("to: {:?}", target_dir);
+    info!("from: {input:?}");
+    info!("to:   {target_dir:?}");
 
     let progress = ProgressBar::new(0).with_style(
         ProgressStyle::default_bar()
