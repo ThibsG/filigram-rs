@@ -12,9 +12,10 @@ Input folder is copied entirely, applying watermark on image files, depending on
 If a file is excluded from watermarking, it is simply copied to destination without any change.
 
 Watermarking process:
-- watermark text is customizable
+- watermark text (customizable) is applied
 - image is resized to a fixed size of 500x500
-- process is multithreaded using `rayon` crate.
+- process is multithreaded using `rayon` crate
+- recopy source image Exif metadata and ICC profile to output image
 
 ## Compatibility
 
