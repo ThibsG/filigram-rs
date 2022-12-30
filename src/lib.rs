@@ -165,41 +165,47 @@ fn recopy_metadata<P: AsRef<Path> + ?Sized + std::fmt::Debug>(
 
 #[cfg(test)]
 mod tests {
-    use crate::recopy_metadata;
+    use super::recopy_metadata;
     use img_parts::jpeg::Jpeg;
     use img_parts::ImageEXIF;
 
     #[test]
-    fn test_exif_read() {
-        let input = std::fs::read("data/exif.jpg").unwrap();
+    fn test_exif_read_maker_note() {
+        let input = std::fs::read("data/exif/notes.jpg").unwrap();
         let jpg = Jpeg::from_bytes(input.into()).unwrap();
         let exif = jpg.exif().unwrap();
-        // println!("{:?}", exif);
-        // TODO better test
-        assert!(exif.contains(&b'V'));
-        assert!(exif.contains(&b'C'));
-        assert!(exif.contains(&b'Y'));
-        assert!(exif.contains(&b'B'));
-        // assert!(exif.contains("V\0I\0L\0L\0A\0C\0O\0U\0B\0L\0A\0Y\0 \0B\0A\0T\0A\0I\0L\0L\0O\0N\0 \0A\0I\0R\0 \01\0.\01\00\07\0 \01\09\04\05\0.\04\06\0\0\0".as_bytes()))
+        assert!(exif.starts_with(b"II"));
+        // println!("{exif:?}");
+        let exif = exif.to_vec();
+        let exif_contains = |note: &[u8]| exif.windows(note.len()).any(|window| window == note);
+        assert!(exif_contains(b"COOLPIX P6000V1.0"));
+        assert!(exif_contains(b"NIKON\0COOLPIX P6000"));
+        assert!(exif_contains(b"Nikon Transfer 1.1 W\0:2008:11:01 21:15:08"));
     }
 
     #[test]
-    fn test_exif_write() {
-        let input = "data/exif.jpg";
-        // let with_image = "data/original.jpg";
-        let work = "data/exif_work.jpg";
+    fn test_exif_read_comments() {
+        let input = std::fs::read("data/exif/comments.jpg").unwrap();
+        let jpg = Jpeg::from_bytes(input.into()).unwrap();
+        let exif = jpg.exif().unwrap();
+        // comment added on Windows (Exif field `winxp-comments`)
+        let comment = b"B\0A\0T\0A\0I\0L\0L\0O\0N\0 \0A\0I\0R\0 \x001\x002\0.\x001\x001\08\0 \0S\0E\0C\0T\0E\0U\0R\0 \0A\0I\0R\0 \x005\x001\0 \0C\0U\0I\0V\0R\0E\0 \0\xe0\0 \0p\0r\0i\0o\0r\0i\0 \0m\0a\0i\0s\0 \0n\0o\0n\0 \0d\0o\0r\0\xe9\0\0\0";
+        assert!(exif.ends_with(comment));
+    }
+
+    #[test]
+    fn test_exif_write_comments() {
+        let input = "data/exif/comments.jpg";
+        let work = "data/exif/test_output.jpg";
         std::fs::copy(input, work).unwrap();
         recopy_metadata(input, work).unwrap();
 
         let output_raw = std::fs::read(work).unwrap();
         let jpg = Jpeg::from_bytes(output_raw.into()).unwrap();
         let exif = jpg.exif().unwrap();
-        // println!("{:?}", exif);
-        // TODO better test
-        assert!(exif.contains(&b'V'));
-        assert!(exif.contains(&b'C'));
-        assert!(exif.contains(&b'Y'));
-        assert!(exif.contains(&b'B'));
+        // comment added on Windows (Exif field `winxp-comments`)
+        let comment = b"B\0A\0T\0A\0I\0L\0L\0O\0N\0 \0A\0I\0R\0 \x001\x002\0.\x001\x001\08\0 \0S\0E\0C\0T\0E\0U\0R\0 \0A\0I\0R\0 \x005\x001\0 \0C\0U\0I\0V\0R\0E\0 \0\xe0\0 \0p\0r\0i\0o\0r\0i\0 \0m\0a\0i\0s\0 \0n\0o\0n\0 \0d\0o\0r\0\xe9\0\0\0";
+        assert!(exif.ends_with(comment));
         std::fs::remove_file(work).unwrap();
     }
 }
