@@ -8,14 +8,17 @@ use std::path::Path;
 
 use crate::config::Config;
 
-pub(crate) fn create_watermark_image(
-    cfg: &Config,
-) -> Result<RgbaImage, Box<dyn std::error::Error>> {
+pub fn create_watermark_image(cfg: &Config) -> Result<RgbaImage, Box<dyn std::error::Error>> {
     let mut img: RgbaImage = ImageBuffer::new(500, 500);
 
     // font for watermark
     let font_bytes = include_bytes!("../fonts/Roboto-Bold.ttf");
-    let font = Font::try_from_bytes(font_bytes).expect("font is not valid");
+    let font = Font::try_from_bytes(font_bytes).ok_or_else(|| {
+        Box::new(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "font is not valid",
+        ))
+    })?;
 
     draw_text_mut(&mut img, cfg.color, 0, 210, cfg.scale, &font, &cfg.text);
 
@@ -24,9 +27,9 @@ pub(crate) fn create_watermark_image(
     Ok(img)
 }
 
-pub(crate) fn overlay_watermark(
-    src: &impl AsRef<Path>,
-    dst: &impl AsRef<Path>,
+pub fn overlay_watermark<P: AsRef<Path>>(
+    src: P,
+    dst: P,
     watermark_img: &RgbaImage,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut img = ImageReader::open(src)?.decode()?;

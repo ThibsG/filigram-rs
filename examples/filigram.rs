@@ -39,7 +39,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     // default parameters
-    let cfg = Config::new();
+    let cfg = Config::default();
 
     let progress = ProgressBar::new(0).with_style(
         ProgressStyle::default_bar()
