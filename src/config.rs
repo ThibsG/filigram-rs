@@ -27,9 +27,3 @@ impl Default for Config {
         }
     }
 }
-
-impl Config {
-    pub fn new() -> Self {
-        Self::default()
-    }
-}

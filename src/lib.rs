@@ -11,11 +11,10 @@ pub mod config;
 mod graphics;
 pub mod rules;
 
-use crate::graphics::{create_watermark_image, overlay_watermark};
-
-pub use crate::config::Config;
-pub use crate::rules::Rules;
+pub use config::Config;
+pub use graphics::{create_watermark_image, overlay_watermark};
 pub use indicatif;
+pub use rules::Rules;
 
 use indicatif::ProgressBar;
 
@@ -86,7 +85,7 @@ pub fn spread_watermark<P: AsRef<Path> + std::fmt::Debug + Sync>(
             if rules.is_file_qualified(&path) {
                 debug!("watermarking {path:?}");
 
-                if let Err(e) = overlay_watermark(&path, &target_path, &watermark_img) {
+                if let Err(e) = overlay_watermark(path, &target_path, &watermark_img) {
                     error!("Error watermarking: {:?} - {}", path, e.to_string());
                 } else {
                     recopy_metadata(&path, &target_path.as_path())

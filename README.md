@@ -4,7 +4,7 @@ Filigram-rs
 This library is a convenient wrapper to watermark image files in a folder, recursively.
 
 <p align="center">
-    <img alt="original" src="./data/original.jpg" width="300" height="300"/> 
+    <img alt="original" src="./data/original.jpg" width="400" height="300"/> 
     <img alt="watermarked" src="./data/watermarked.jpg" width="300" height="300"/>
 </p>
 
