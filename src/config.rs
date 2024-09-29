@@ -1,3 +1,4 @@
+use ab_glyph::PxScale;
 use image::Rgba;
 
 /// Customization of the watermark.
@@ -8,14 +9,14 @@ use image::Rgba;
 pub struct Config {
     pub text: String,
     pub color: image::Rgba<u8>,
-    pub scale: rusttype::Scale,
+    pub scale: PxScale,
 }
 
 impl Default for Config {
     fn default() -> Self {
         // scale
         let height = 28.0;
-        let scale = rusttype::Scale {
+        let scale = PxScale {
             x: height * 2.3,
             y: height * 2.3,
         };

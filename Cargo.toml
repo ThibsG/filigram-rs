@@ -4,14 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+ab_glyph = "0.2"
 indicatif = "0.17"
-image = "0.24"
-imageproc = "0.23"
+image = "0.25"
+imageproc = "0.25"
 img-parts = "0.3"
 log = "0.4"
 rayon = "1.5"
-rusttype = "0.9"
 walkdir = "2.3"
 
 [dev-dependencies]
-env_logger = "0.9"
+env_logger = "0.11"

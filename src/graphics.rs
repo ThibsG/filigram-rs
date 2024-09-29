@@ -1,9 +1,9 @@
+use ab_glyph::FontRef;
 use image::imageops::{overlay, FilterType};
-use image::io::Reader as ImageReader;
+use image::ImageReader;
 use image::{ImageBuffer, Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use imageproc::geometric_transformations::{rotate_about_center, Interpolation};
-use rusttype::Font;
 use std::path::Path;
 
 use crate::config::Config;
@@ -13,12 +13,7 @@ pub fn create_watermark_image(cfg: &Config) -> Result<RgbaImage, Box<dyn std::er
 
     // font for watermark
     let font_bytes = include_bytes!("../fonts/Roboto-Bold.ttf");
-    let font = Font::try_from_bytes(font_bytes).ok_or_else(|| {
-        Box::new(std::io::Error::new(
-            std::io::ErrorKind::InvalidInput,
-            "font is not valid",
-        ))
-    })?;
+    let font = FontRef::try_from_slice(font_bytes)?;
 
     draw_text_mut(&mut img, cfg.color, 0, 210, cfg.scale, &font, &cfg.text);
 
