@@ -1,4 +1,5 @@
 use core::sync::atomic::{AtomicU64, Ordering};
+use img_parts::webp::WebP;
 use img_parts::{jpeg::Jpeg, png::Png};
 use img_parts::{ImageEXIF, ImageICC};
 use log::{debug, error};
@@ -156,6 +157,22 @@ fn recopy_metadata<P: AsRef<Path> + ?Sized + std::fmt::Debug>(
                 .encoder()
                 .write_to(&output_file)
                 .expect("cannot write to output jpg file");
+        }
+        "webp" => {
+            let input_webp = WebP::from_bytes(input.into()).expect("unable to get as webp");
+
+            let mut output_webp = WebP::from_bytes(output.into()).expect("unable to get as webp");
+            output_webp.set_exif(input_webp.exif());
+            output_webp.set_icc_profile(input_webp.icc_profile());
+
+            let output_file = OpenOptions::new()
+                .write(true)
+                .open(to)
+                .expect("unable to open webp as File");
+            output_webp
+                .encoder()
+                .write_to(&output_file)
+                .expect("cannot write to output webp file");
         }
         other => error!("Extension ({other}) not supported to get Exif metadata: {from:?}"),
     }
